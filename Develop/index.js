@@ -1,4 +1,5 @@
 // TODO: Include packages needed for this application
+const fs = require('fs');
 const inquirer = require('inquirer');
 
 // TODO: Create an array of questions for user input
@@ -43,14 +44,34 @@ message: 'include license?'
 ];
 
 // TODO: Create a function to write README file
-function writeToFile(fileName, data) {
-
+const writeToFile = data => {
+return new Promise((resolve, reject) => {
+fs.writeFile('./dist/README.md', data, err => {
+    if (err) {
+    reject (err);
+    return;
+}
+resolve({
+ok: true,
+message: 'go to the distributable / dist directory'
+});
+})
+})
 }
 
 // TODO: Create a function to initialize app
-function init() {
-    return inquirer.prompt(questions);
+const init = () => {
+return inquirer.prompt(questions);
 }
 
 // Function call to initialize app
-init();
+init()
+.then(userInput => {
+return generateMarkdown(userInput);
+})
+.then(readmeInfo => {
+return writeToFile(readmeInfo);
+})
+.catch(err => {
+console.log(err);
+})
